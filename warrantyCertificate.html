@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공방 301 보증서 일괄처리</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        /* MongolianBaiti */
+        @font-face {
+            font-family: 'baiti', serif;
+            src: url('Font/MongolianBaiti.woff2') format('woff2'),
+                url('Font/MongolianBaiti.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body {
+            font-family: 'Noto Serif KR', serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        ul {
+            padding: 0;
+        }
+
+        ul li {
+            list-style-type: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            background-color: #fff;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        #jsonInput {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+            padding: 12px;
+            /* border: 1px solid #ddd; */
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #printBtn {
+            background-color: #2196F3;
+        }
+
+        #printBtn:hover {
+            background-color: #0b7dda;
+        }
+
+        #loadFileBtn {
+            background-color: #FF9800;
+        }
+
+        #loadFileBtn:hover {
+            background-color: #e68a00;
+        }
+
+        .certificate {
+            width: 14.8cm;
+            height: 21cm;
+            padding: 1.5cm;
+            margin: 20px auto;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            page-break-after: always;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Baiti', serif;
+        }
+
+        /* .certificate-header {
+            text-align: center;
+            margin-bottom: 30px;
+        } */
+
+        .certificate-title {
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 10px;
+            margin-top: 2cm;
+            margin-bottom: 1.5cm;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .certificate-subtitle {
+            text-align: center;
+            font-size: 13px;
+            letter-spacing: 2px;
+            font-weight: 400;
+            font-family: 'Baiti', serif;
+        }
+
+        .divider {
+            width: 100%;
+            border-top: 0.1px solid #00000050;
+            margin: 10px 0;
+        }
+
+        .certificate-content {
+            width: 100%;
+            text-align: center;
+            margin: 0.8cm 0;
+            font-size: 13px;
+            line-height: 0.8;
+            font-family: 'Noto Serif KR', serif;
+            font-weight: 400;
+        }
+
+        .smaller {
+            font-size: 11px;
+        }
+
+        .certificate-table {
+            border-top: 1px solid #D3D3D3;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .certificate-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.8cm 0;
+            font-size: 13px;
+            font-family: 'Noto Serif KR', serif;
+        }
+
+        .certificate-table tr {
+            border-bottom: 1px solid #D3D3D3;
+        }
+
+        .certificate-table tr:first-child {
+            border-top: 1px solid #D3D3D3;
+
+
+        }
+
+        .certificate-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .certificate-label {
+            flex: 0 0 25%;
+            position: relative;
+            padding: 0px 0px 0px 35px;
+            font-size: 13px;
+            font-family: 'Noto Serif KR', serif;
+        }
+
+        .certificate-divider {
+            border-left: 1px solid #D3D3D3;
+            margin: 7px 10px;
+            /* 좌우 여백 추가 */
+            align-self: stretch;
+            /* background-color 제거 */
+            transform: scaleX(0.8);
+        }
+
+        .certificate-value {
+            flex: 1;
+            padding: 5px 0 5px 20px;
+            font-size: 13px;
+            font-family: 'Noto Serif KR', serif;
+        }
+
+        .certificate-footer {
+            width: 100%;
+            text-align: center;
+            position: absolute;
+            bottom: 1cm;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .certificate-date {
+            margin-top: 30px;
+            text-align: right;
+            font-size: 16px;
+        }
+
+        .no-certificate {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        /*프린트 할 부분만 확인*/
+        @media print {
+
+            .controls {
+                display: none;
+            }
+
+            body,
+            html {
+                margin: 0;
+                padding: 0;
+            }
+
+            /* @page {
+                size: A5;
+                /* margin: 20mm; */
+            /* zoom: 0.8; */
+
+
+            body * {
+                visibility: hidden;
+            }
+
+            #certificateContainer,
+            #certificateContainer * {
+                visibility: visible;
+            }
+
+            #certificateContainer {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+
+            .container {
+                width: 100%;
+                box-sizing: border-box;
+                /* padding: 10mm; */
+            }
+
+            .certificate {
+                padding: 0 auto;
+                margin: 0 auto;
+                /* border: 1px solid #D3D3D3; */
+                background-color: white;
+                box-shadow: none;
+                position: relative;
+                font-size: 10px;
+                /* 강제 나눔 */
+                page-break-after: always;
+
+            }
+
+            .certificate-title {
+                font-size: 20px;
+                text-align: center;
+                letter-spacing: 10px;
+                margin-top: 2cm;
+                margin-bottom: 1.5cm;
+                font-weight: 400;
+                text-transform: uppercase;
+            }
+
+            .certificate-subtitle {
+                font-family: 'Baiti', serif;
+                font-size: 13px;
+            }
+
+            /* Table 부분*/
+
+            .certificate-table {
+                border-top: 1px solid #D3D3D3;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            .certificate-table tr {
+                border-bottom: 1px solid #D3D3D3;
+            }
+
+            .certificate-table tr:first-child {
+                border-top: 1px solid #D3D3D3;
+            }
+
+            .certificate-row {
+                display: flex;
+                align-items: center;
+            }
+
+            .certificate-label {
+                flex: 0 0 25%;
+                position: relative;
+                padding: 0px 0px 0px 35px;
+                font-size: 13px;
+                font-family: 'Noto Serif KR', serif;
+            }
+
+            .certificate-divider {
+                border-left: 1px solid #D3D3D3;
+                margin: 7px 10px;
+                /* 좌우 여백 추가 */
+                align-self: stretch;
+                /* background-color 제거 */
+                transform: scaleX(0.8);
+            }
+
+            .certificate-value {
+                flex: 1;
+                padding: 5px 0 5px 20px;
+                font-size: 13px;
+                font-family: 'Noto Serif KR', serif;
+            }
+
+            .certificate-terms li {
+                font-size: 10px;
+                margin-bottom: 4px;
+            }
+
+            .certificate-date {
+                font-size: 11px;
+                margin-top: 15px;
+            }
+
+            .no-certificate {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="controls">
+            <h2>보증서 일괄처리</h2>
+            <p>아래에 코드펜에서 가져온 JSON 데이터를 입력하세요.</p>
+
+            <textarea id="jsonInput" placeholder="JSON 데이터를 입력하세요."></textarea>
+
+            <div>
+                <input type="file" id="fileInput" accept=".json" style="display:none;">
+                <button id="loadFileBtn">JSON 파일 불러오기</button>
+                <button id="batchProcessBtn">일괄 처리</button>
+                <button id="printBtn">인쇄하기</button>
+            </div>
+        </div>
+
+        <div id="certificateContainer">
+            <div class="no-certificate">
+                <p>JSON 데이터를 입력하고 '보증서 생성' 버튼을 클릭하여 보증서를 생성하세요.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 오늘 날짜 가져오기
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}년 ${month}월 ${day}일`;
+        }
+
+        // 보증서 일괄처리 DOM 생성
+        function generateCertificateHTML(data, customerKey = null) {
+
+            let items, customerName, mateName, orderNo;
+
+            // 제품 여러개 주문한 경우 고객 이름으로 배열 정리
+            if (Array.isArray(data) && customerKey) {
+                items = data;
+                if (items.length > 0) {
+                    customerName = items[0].customerName || '';
+                    mateName = items[0].mateName || '';
+                    orderNo = items[0].orderNo || '';
+                }
+            } else {
+                items = [data];
+                customerName = data.name || '';
+                orderNo = '';
+            }
+
+
+            const today = new Date();
+
+            // 제품 값 join
+            const modelNos = items.map(item => item.modelNo || item.modelName || '').join('   •   ');
+            const weights = items.map(item => item.gram ? item.gram + 'g' : (item.weight || '')).join('   •   ');
+            const sizes = items.map(item => item.size || '').join('   •   ');
+            let stonesToCheck = items.map(item => item.stone || '');
+            const colors = items.map(item => item.gold || item.color || '').join('   •   ');
+
+            //스톤 예외처리
+            let stonesDisplay;
+            const hasNoStones = stonesToCheck.every(stone => {
+                return !stone || stone.trim() === '';
+            });
+
+            if (hasNoStones) {
+                stonesDisplay = '•';
+            } else {
+                stonesDisplay = stonesToCheck.map(stone => {
+                    return stone && stone.trim() !== '' ? stone : '-';
+                }).join(' • ');
+            }
+
+
+            //보증기간
+            const warrantyEndDate = new Date();
+            warrantyEndDate.setFullYear(today.getFullYear() + 1);
+
+            // [예외] nowDate가 있으면 사용, 없으면 현재 날짜 사용
+            let certificateDate = today;
+            if (data.nowDate) {
+                try {
+                    certificateDate = new Date(data.nowDate);
+                    if (isNaN(certificateDate)) {
+                        certificateDate = today;
+                    }
+                } catch (e) {
+                    certificateDate = today;
+                }
+            }
+
+            const warrantyEnd = new Date(certificateDate);
+            warrantyEnd.setFullYear(certificateDate.getFullYear() + 1);
+            return `
+                <div class="certificate">
+                    <div class="certificate-title">CERTIFICATE</div>
+                    <div class="divider"></div>
+                    <div class="certificate-subtitle">WARRANTY CARD</div>
+                    <div class="divider"></div>
+                    
+                    <div class="certificate-content">
+                        <p>공방301 정품 주얼리를 선택해 주셔서 진심으로 감사드립니다.</p>
+                        <p>소중한 제품을 오래도록 아름답게 간직하실 수 있도록 본 보증서를</p>
+                        <p>안전하게 보관해 주시기 바랍니다.</p>
+                        <br>
+                        <br>
+                        <p class="smaller">아래와 같이 제품의 품질을 보증합니다.</p>
+                    </div>
+                    
+                    <table class="certificate-table">
+                        <tr>                            
+                            <td>
+                                <div class="certificate-row">
+                                <div class="certificate-label">For.</div>
+                                <div class="certificate-divider"></div>
+                                <div class="certificate-value">${customerName}${mateName ? ' & ' + mateName : ''}</div>
+          </div>
+        </td>
+                        </tr>
+                        <tr>
+                                    <td>
+          <div class="certificate-row">
+            <div class="certificate-label">Model.N</div>
+            <div class="certificate-divider"></div>
+            <div class="certificate-value">${modelNos}</div>
+          </div>
+        </td>
+                
+                        </tr>
+                        <tr>
+                                  <td>
+          <div class="certificate-row">
+            <div class="certificate-label">Weight</div>
+            <div class="certificate-divider"></div>
+            <div class="certificate-value">${weights}</div>
+          </div>
+        </td>
+                
+                        </tr>
+                        <tr>
+                                 <td>
+          <div class="certificate-row">
+            <div class="certificate-label">Size</div>
+            <div class="certificate-divider"></div>
+            <div class="certificate-value">${sizes}</div>
+          </div>
+        </td>
+        
+                        </tr>
+                        <tr>
+                                   <td>
+          <div class="certificate-row">
+            <div class="certificate-label">Stone</div>
+            <div class="certificate-divider"></div>
+            <div class="certificate-value">${stonesDisplay}</div>
+          </div>
+        </td>
+                        </tr>
+                        <tr>
+                                 <td>
+          <div class="certificate-row">
+            <div class="certificate-label">Gold</div>
+            <div class="certificate-divider"></div>
+            <div class="certificate-value">${colors}</div>
+          </div>
+        </td>
+                        </tr>
+                        <tr>
+                         <td>
+          <div class="certificate-row">
+            <div class="certificate-label">Purchase date</div>
+            <div class="certificate-divider"></div>
+            <div class="certificate-value">${formatDate(today)}</div>
+          </div>
+        </td>
+            
+                        </tr>
+                    </table>
+                    
+                    <div class="certificate-footer">
+                        GONGBANG 301
+                    </div>
+                </div>
+            `;
+
+
+        }
+
+        // 이벤트 리스너
+        document.addEventListener('DOMContentLoaded', function () {
+            const jsonInput = document.getElementById('jsonInput');
+            const fileInput = document.getElementById('fileInput');
+            const loadFileBtn = document.getElementById('loadFileBtn');
+
+            const batchProcessBtn = document.getElementById('batchProcessBtn');
+            const certificateContainer = document.getElementById('certificateContainer');
+            const printBtn = document.getElementById('printBtn');
+
+            // JSON 파일 업로드
+            loadFileBtn.addEventListener('click', function () {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', function (event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                // 파일 확장자 확인
+                if (!file.name.endsWith('.json')) {
+                    alert('JSON 파일(.json)만 업로드 가능합니다.');
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    try {
+                        // 파일 내용 읽기
+                        const fileContent = e.target.result;
+
+                        // JSON 형식 검증
+                        JSON.parse(fileContent); // 오류가 있으면 catch로 이동
+
+                        // 텍스트 영역에 표시
+                        jsonInput.value = fileContent;
+
+                        alert('JSON 파일을 성공적으로 불러왔습니다.');
+                    } catch (error) {
+                        alert('유효한 JSON 파일이 아닙니다: ' + error.message);
+                    }
+                };
+
+                reader.onerror = function () {
+                    alert('파일을 읽는 중 오류가 발생했습니다.');
+                };
+
+                // 텍스트로 파일 읽기
+                reader.readAsText(file);
+            });
+
+
+            // 인쇄하기
+            printBtn.addEventListener('click', function () {
+                window.print({
+                    landscape: true, // 가로영역 --> 작동안함 check
+                });
+            });
+
+            // 일괄 처리 (모든 데이터에 대해 보증서 생성)
+            batchProcessBtn.addEventListener('click', function () {
+                //console.log('click!!')
+                try {
+                    const jsonData = JSON.parse(jsonInput.value);
+                    certificateContainer.innerHTML = '';
+
+                    // 배열인 경우에만 모든 항목 처리
+                    if (Array.isArray(jsonData)) {
+                        if (jsonData.length === 0) {
+                            throw new Error("데이터가 비어 있습니다.");
+                        }
+
+                        jsonData.forEach((item, index) => {
+                            certificateContainer.innerHTML += generateCertificateHTML(item);
+                        });
+
+                    } else if (typeof jsonData === 'object') {
+                        const keys = Object.keys(jsonData);
+                        if (keys.length === 0) {
+                            throw new Error("데이터가 비어 있습니다.");
+                        }
+
+                        keys.forEach(key => {
+                            if (Array.isArray(jsonData[key]) && jsonData[key].length > 0) {
+                                certificateContainer.innerHTML += generateCertificateHTML(jsonData[key], key);
+                            }
+                        });
+                    }
+                    else {
+                        // 단일 객체인 경우
+
+                        alert('일괄 처리할..');
+                        certificateContainer.innerHTML = generateCertificateHTML(jsonData);
+                    }
+                }
+                catch (error) {
+                    alert('JSON 데이터 형식이 올바르지 않습니다: ' + error.message);
+                    certificateContainer.innerHTML = `
+                        <div class="no-certificate">
+                            <p>JSON 데이터 형식이 올바르지 않습니다.</p>
+                            <p>오류: ${error.message}</p>
+                        </div>
+                    `;
+                }
+                console.log("click!!22");
+
+            }); //batchProcessBtn End
+
+            // 시작 시 샘플 데이터 로드 (옵션)
+            // jsonInput.value = JSON.stringify(sampleData[0], null, 2);
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공방 301 보증서</title>
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        #jsonInput {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .certificate {
+            width: 21cm;
+            height: 29.7cm;
+            padding: 2cm;
+            margin: 0 auto;
+            border: 1px solid #D3D3D3;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .certificate-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .certificate-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 5px;
+        }
+
+        .certificate-subtitle {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .certificate-content {
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        .certificate-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+        }
+
+        .certificate-table th,
+        .certificate-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .certificate-table th {
+            background-color: #f2f2f2;
+            width: 30%;
+        }
+
+        .certificate-footer {
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        .certificate-date {
+            margin-top: 40px;
+            text-align: right;
+            font-size: 16px;
+        }
+
+        .certificate-stamp {
+            position: absolute;
+            right: 80px;
+            bottom: 150px;
+            width: 100px;
+            height: 100px;
+            border: 2px solid #D00000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #D00000;
+            transform: rotate(-15deg);
+            opacity: 0.8;
+        }
+
+        @media print {
+
+            .controls,
+            .no-print {
+                display: none;
+            }
+
+            .certificate {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                height: auto;
+            }
+
+            body {
+                padding: 0;
+            }
+        }
+
+        #sampleData {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="controls no-print">
+            <h2>보증서 일괄 인쇄</h2>
+            <p>아래에 코드펜에서 가져온 JSON 데이터를 입력하세요.</p>
+
+            <textarea id="jsonInput"
+                placeholder="JSON 데이터를 입력하세요. 예: [{'이름':'홍길동', '주문상품':'노트북', '색상':'블랙', '수량':1, '금액':1500000}]"></textarea>
+
+            <button id="loadSampleBtn">샘플 데이터 불러오기</button>
+            <button id="generateBtn">보증서 생성</button>
+            <button id="printBtn">인쇄하기</button>
+            <button id="batchProcessBtn">일괄 처리</button>
+
+            <div id="sampleData">
+                샘플 JSON 형식: [{"이름":"홍길동", "주문상품":"노트북", "색상":"블랙", "수량":1, "금액":1500000}]
+            </div>
+        </div>
+
+        <div id="certificateContainer"></div>
+    </div>
+
+    <script>
+        // 오늘 날짜 포맷팅 함수
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}년 ${month}월 ${day}일`;
+        }
+
+        // 샘플 데이터
+        const sampleData = [
+            { "이름": "홍길동", "주문상품": "노트북", "색상": "블랙", "수량": 1, "금액": 1500000 },
+            { "이름": "김철수", "주문상품": "스마트폰", "색상": "화이트", "수량": 2, "금액": 2400000 },
+            { "이름": "이영희", "주문상품": "태블릿", "색상": "실버", "수량": 1, "금액": 800000 }
+        ];
+
+        // 금액 포맷팅 함수
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ko-KR', { style: 'currency', currency: 'KRW' }).format(amount);
+        }
+
+        // 보증서 HTML 생성 함수
+        function generateCertificateHTML(data) {
+            const today = new Date();
+            const warrantyEndDate = new Date();
+            warrantyEndDate.setFullYear(today.getFullYear() + 1); // 1년 보증
+
+            return `
+                <div class="certificate">
+                    <div class="certificate-header">
+                        <div class="certificate-title">제품 보증서</div>
+                        <div class="certificate-subtitle">Product Warranty Certificate</div>
+                    </div>
+                    
+                    <div class="certificate-content">
+                        <p>아래와 같이 제품의 품질을 보증합니다.</p>
+                        
+                        <table class="certificate-table">
+                            <tr>
+                                <th>고객명</th>
+                                <td>${data.이름}</td>
+                            </tr>
+                            <tr>
+                                <th>제품명</th>
+                                <td>${data.주문상품}</td>
+                            </tr>
+                            <tr>
+                                <th>색상</th>
+                                <td>${data.색상}</td>
+                            </tr>
+                            <tr>
+                                <th>수량</th>
+                                <td>${data.수량}개</td>
+                            </tr>
+                            <tr>
+                                <th>구매가격</th>
+                                <td>${formatCurrency(data.금액)}</td>
+                            </tr>
+                            <tr>
+                                <th>구매일자</th>
+                                <td>${formatDate(today)}</td>
+                            </tr>
+                            <tr>
+                                <th>보증기간</th>
+                                <td>${formatDate(today)} ~ ${formatDate(warrantyEndDate)}</td>
+                            </tr>
+                        </table>
+                        
+                        <div class="certificate-terms">
+                            <h3>보증 조건</h3>
+                            <ol>
+                                <li>본 보증서는 구매일로부터 1년간 유효합니다.</li>
+                                <li>정상적인 사용 조건 하에서 발생한 제품의 결함에 대해서만 보증이 적용됩니다.</li>
+                                <li>사용자의 부주의로 인한 손상이나 개조로 인한 고장은 보증 대상에서 제외됩니다.</li>
+                                <li>보증 서비스를 받으시려면 본 보증서와 구매 영수증을 함께 제시해 주십시오.</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="certificate-date">
+                            발행일: ${formatDate(today)}
+                        </div>
+                        
+                        <div class="certificate-footer">
+                            <p>(주)브랜드명</p>
+                            <p>대표이사: 대표자명 (인)</p>
+                            <p>주소: 서울특별시 강남구 테헤란로 123</p>
+                            <p>고객센터: 1588-0000</p>
+                        </div>
+                        
+                        <div class="certificate-stamp">
+                            공식 인증
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 이벤트 리스너 등록
+        document.addEventListener('DOMContentLoaded', function () {
+            const jsonInput = document.getElementById('jsonInput');
+            const loadSampleBtn = document.getElementById('loadSampleBtn');
+            const generateBtn = document.getElementById('generateBtn');
+            const printBtn = document.getElementById('printBtn');
+            const batchProcessBtn = document.getElementById('batchProcessBtn');
+            const certificateContainer = document.getElementById('certificateContainer');
+
+            // 샘플 데이터 불러오기
+            loadSampleBtn.addEventListener('click', function () {
+                jsonInput.value = JSON.stringify(sampleData, null, 2);
+            });
+
+            // 보증서 생성
+            generateBtn.addEventListener('click', function () {
+                try {
+                    const jsonData = JSON.parse(jsonInput.value);
+                    certificateContainer.innerHTML = '';
+
+                    // 단일 객체인지 배열인지 확인
+                    if (Array.isArray(jsonData)) {
+                        jsonData.forEach((item, index) => {
+                            if (index === 0) { // 첫 번째 항목만 표시
+                                certificateContainer.innerHTML += generateCertificateHTML(item);
+                            }
+                        });
+                    } else {
+                        certificateContainer.innerHTML = generateCertificateHTML(jsonData);
+                    }
+                } catch (error) {
+                    alert('JSON 데이터 형식이 올바르지 않습니다: ' + error.message);
+                }
+            });
+
+            // 인쇄하기
+            printBtn.addEventListener('click', function () {
+                window.print();
+            });
+
+            // 일괄 처리 (모든 데이터에 대해 보증서 생성)
+            batchProcessBtn.addEventListener('click', function () {
+                try {
+                    const jsonData = JSON.parse(jsonInput.value);
+                    certificateContainer.innerHTML = '';
+
+                    // 배열인 경우에만 모든 항목 처리
+                    if (Array.isArray(jsonData)) {
+                        jsonData.forEach(item => {
+                            certificateContainer.innerHTML += generateCertificateHTML(item);
+                            // 각 보증서 사이에 페이지 나누기
+                            certificateContainer.innerHTML += '<div style="page-break-after: always;"></div>';
+                        });
+                    } else {
+                        certificateContainer.innerHTML = generateCertificateHTML(jsonData);
+                    }
+                } catch (error) {
+                    alert('JSON 데이터 형식이 올바르지 않습니다: ' + error.message);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
