@@ -95,9 +95,9 @@
         }
 
         .certificate {
-            width: 14.8cm;
-            height: 21cm;
-            padding: 1.5cm;
+            width: 127mm;
+            height: 178mm;
+            padding: 1.2cm 8mm;
             margin: 20px auto;
             background-color: white;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -118,15 +118,15 @@
             font-size: 20px;
             text-align: center;
             letter-spacing: 10px;
-            margin-top: 2cm;
-            margin-bottom: 1.5cm;
+            margin-top: 2mm;
+            margin-bottom: 4mm;
             font-weight: 500;
             text-transform: uppercase;
         }
 
         .certificate-subtitle {
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             letter-spacing: 2px;
             font-weight: 400;
             font-family: 'Baiti', serif;
@@ -135,7 +135,7 @@
         .divider {
             width: 100%;
             border-top: 0.1px solid #00000050;
-            margin: 10px 0;
+            margin: 8px 0;
         }
 
         .certificate-content {
@@ -154,15 +154,13 @@
 
         .certificate-table {
             border-top: 1px solid #D3D3D3;
-            border-collapse: collapse;
-            width: 100%;
         }
 
         .certificate-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 0.8cm 0;
-            font-size: 13px;
+            margin: 2cm 0;
+            font-size: 9px;
             font-family: 'Noto Serif KR', serif;
         }
 
@@ -201,7 +199,7 @@
         .certificate-value {
             flex: 1;
             padding: 5px 0 5px 20px;
-            font-size: 13px;
+            font-size: 11px;
             font-family: 'Noto Serif KR', serif;
         }
 
@@ -209,8 +207,8 @@
             width: 100%;
             text-align: center;
             position: absolute;
-            bottom: 1cm;
-            font-size: 10px;
+            bottom: 0;
+            font-size: 16px;
             font-weight: 500;
         }
 
@@ -229,6 +227,26 @@
             margin: 20px 0;
         }
 
+        #Footer {
+            position: relative;
+            width: 100%;
+            height: 200px;
+        }
+
+        .logo-round {
+            background-image: url("/Img/gb_stamp_logo_origin.png");
+            width: 85px;
+            height: 85px;
+            background-repeat: no-repeat;
+            background-size: cover;
+
+            position: absolute;
+            top: -100px;
+            right: 45px;
+        }
+
+
+
         /*프린트 할 부분만 확인*/
         @media print {
 
@@ -242,10 +260,6 @@
                 padding: 0;
             }
 
-            /* @page {
-                size: A5;
-                /* margin: 20mm; */
-            /* zoom: 0.8; */
 
 
             body * {
@@ -271,6 +285,8 @@
             }
 
             .certificate {
+                width: 127mm;
+                height: 178mm;
                 padding: 0 auto;
                 margin: 0 auto;
                 /* border: 1px solid #D3D3D3; */
@@ -287,23 +303,32 @@
                 font-size: 20px;
                 text-align: center;
                 letter-spacing: 10px;
-                margin-top: 2cm;
-                margin-bottom: 1.5cm;
+                margin-top: 2mm;
+                margin-bottom: 4cm;
                 font-weight: 400;
                 text-transform: uppercase;
             }
 
             .certificate-subtitle {
                 font-family: 'Baiti', serif;
-                font-size: 13px;
+                font-size: 12px;
+                letter-spacing: 2px;
             }
 
             /* Table 부분*/
 
             .certificate-table {
+                width: 100%;
                 border-top: 1px solid #D3D3D3;
                 border-collapse: collapse;
+                margin: 0cm 0;
+                font-size: 9px;
+            }
+
+            .divider {
                 width: 100%;
+                border-top: 0.1px solid #00000050;
+                margin: 8px 0;
             }
 
             .certificate-table tr {
@@ -339,7 +364,7 @@
             .certificate-value {
                 flex: 1;
                 padding: 5px 0 5px 20px;
-                font-size: 13px;
+                font-size: 11px;
                 font-family: 'Noto Serif KR', serif;
             }
 
@@ -355,6 +380,18 @@
 
             .no-certificate {
                 display: none;
+            }
+
+            .certificate-title,
+            .certificate-subtitle,
+            .certificate-content,
+            .certificate-content *,
+            .divider {
+                visibility: hidden !important;
+            }
+
+            #Footer * {
+                visibility: hidden;
             }
         }
     </style>
@@ -475,74 +512,71 @@
                         <tr>                            
                             <td>
                                 <div class="certificate-row">
-                                <div class="certificate-label">For.</div>
-                                <div class="certificate-divider"></div>
-                                <div class="certificate-value">${customerName}${mateName ? ' & ' + mateName : ''}</div>
-          </div>
-        </td>
+                                    <div class="certificate-label">For.</div>
+                                    <div class="certificate-divider"></div>
+                                    <div class="certificate-value">${customerName}${mateName ? ' & ' + mateName : ''}</div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                                    <td>
-          <div class="certificate-row">
-            <div class="certificate-label">Model.N</div>
-            <div class="certificate-divider"></div>
-            <div class="certificate-value">${modelNos}</div>
-          </div>
-        </td>
-                
+                            <td>
+                                <div class="certificate-row">
+                                    <div class="certificate-label">Model.N</div>
+                                    <div class="certificate-divider"></div>
+                                    <div class="certificate-value">${modelNos}</div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                                  <td>
-          <div class="certificate-row">
-            <div class="certificate-label">Weight</div>
-            <div class="certificate-divider"></div>
-            <div class="certificate-value">${weights}</div>
-          </div>
-        </td>
-                
+                            <td>
+                                <div class="certificate-row">
+                                    <div class="certificate-label">Weight</div>
+                                    <div class="certificate-divider"></div>
+                                    <div class="certificate-value">${weights}</div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                                 <td>
-          <div class="certificate-row">
-            <div class="certificate-label">Size</div>
-            <div class="certificate-divider"></div>
-            <div class="certificate-value">${sizes}</div>
-          </div>
-        </td>
-        
+                            <td>
+                                <div class="certificate-row">
+                                    <div class="certificate-label">Size</div>
+                                    <div class="certificate-divider"></div>
+                                    <div class="certificate-value">${sizes}</div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                                   <td>
-          <div class="certificate-row">
-            <div class="certificate-label">Stone</div>
-            <div class="certificate-divider"></div>
-            <div class="certificate-value">${stonesDisplay}</div>
-          </div>
-        </td>
+                            <td>
+                                <div class="certificate-row">
+                                    <div class="certificate-label">Stone</div>
+                                    <div class="certificate-divider"></div>
+                                    <div class="certificate-value">${stonesDisplay}</div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                                 <td>
-          <div class="certificate-row">
-            <div class="certificate-label">Gold</div>
-            <div class="certificate-divider"></div>
-            <div class="certificate-value">${colors}</div>
-          </div>
-        </td>
+                            <td>
+                                <div class="certificate-row">
+                                    <div class="certificate-label">Gold</div>
+                                    <div class="certificate-divider"></div>
+                                    <div class="certificate-value">${colors}</div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
-                         <td>
-          <div class="certificate-row">
-            <div class="certificate-label">Purchase date</div>
-            <div class="certificate-divider"></div>
-            <div class="certificate-value">${formatDate(today)}</div>
-          </div>
-        </td>
-            
+                            <td>
+                                <div class="certificate-row">
+                                    <div class="certificate-label">Purchase date</div>
+                                    <div class="certificate-divider"></div>
+                                    <div class="certificate-value">${formatDate(today)}</div>
+                                </div>
+                            </td>
                         </tr>
                     </table>
                     
-                    <div class="certificate-footer">
-                        GONGBANG 301
+                    <div id="Footer">
+                        <div class="certificate-footer">GONGBANG 301</div>
+                        <div class="logo-round"></div>
                     </div>
                 </div>
             `;
@@ -655,7 +689,7 @@
                         </div>
                     `;
                 }
-                console.log("click!!22");
+                // console.log("click!!22");
 
             }); //batchProcessBtn End
 
