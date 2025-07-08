@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>공방 301 보증서 일괄처리 v2.4</title>
+    <title>공방 301 보증서 일괄처리 v2.5</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
@@ -421,13 +421,13 @@
     </div>
 
     <script>
-        // 오늘 날짜 가져오기
-        function formatDate(date) {
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}년 ${month}월 ${day}일`;
-        }
+        // 오늘 날짜 가져오기 --- 7/7 삭제
+        // function formatDate(date) {
+        //     const year = date.getFullYear();
+        //     const month = String(date.getMonth() + 1).padStart(2, '0');
+        //     const day = String(date.getDate()).padStart(2, '0');
+        //     return `${year}년 ${month}월 ${day}일`;
+        // }
 
         // 보증서 일괄처리 DOM 생성
         function generateCertificateHTML(data, customerKey = null) {
@@ -449,15 +449,21 @@
             }
 
 
-            const today = new Date();
+            // const today = new Date();
 
             // 제품 값 join
             const modelNos = items.map(item => item.modelNo || item.modelName || '').join('   •   ');
             const weights = items.map(item => item.gram ? item.gram + 'g' : (item.weight || '')).join('   •   ');
             const sizes = items.map(item => item.size || '').join('   •   ');
+
+            // stone
             let stonesToCheck = items.map(item => item.stone || '');
+
             const colors = items.map(item => item.gold || item.color || '').join('   •   ');
-            // const purchaseDate = items.map(item => item.purchasedate)
+
+            //order date
+            const uniqueOrderDates = [...new Set(items.map(item => item.orderDate || ''))].filter(date => date !== '');
+            const orderDates = uniqueOrderDates.join('   •   ');
 
             //스톤 예외처리
             let stonesDisplay;
@@ -475,24 +481,24 @@
 
 
             //보증기간
-            const warrantyEndDate = new Date();
-            warrantyEndDate.setFullYear(today.getFullYear() + 1);
+            // const warrantyEndDate = new Date();
+            // warrantyEndDate.setFullYear(today.getFullYear() + 1);
 
             // [예외] nowDate가 있으면 사용, 없으면 현재 날짜 사용
-            let certificateDate = today;
-            if (data.nowDate) {
-                try {
-                    certificateDate = new Date(data.nowDate);
-                    if (isNaN(certificateDate)) {
-                        certificateDate = today;
-                    }
-                } catch (e) {
-                    certificateDate = today;
-                }
-            }
+            // let certificateDate = today;
+            // if (data.nowDate) {
+            //     try {
+            //         certificateDate = new Date(data.nowDate);
+            //         if (isNaN(certificateDate)) {
+            //             certificateDate = today;
+            //         }
+            //     } catch (e) {
+            //         certificateDate = today;
+            //     }
+            // }
 
-            const warrantyEnd = new Date(certificateDate);
-            warrantyEnd.setFullYear(certificateDate.getFullYear() + 1);
+            // const warrantyEnd = new Date(certificateDate);
+            // warrantyEnd.setFullYear(certificateDate.getFullYear() + 1);
             return `
                 <div class="certificate">
                     <div class="certificate-title">CERTIFICATE</div>
@@ -567,9 +573,9 @@
                         <tr>
                             <td>
                                 <div class="certificate-row">
-                                    <div class="certificate-label">Purchase date</div>
+                                    <div class="certificate-label">Order Date</div>
                                     <div class="certificate-divider"></div>
-                                    <div class="certificate-value">${formatDate(today)}</div>
+                                    <div class="certificate-value">${orderDates}</div>
                                 </div>
                             </td>
                         </tr>
