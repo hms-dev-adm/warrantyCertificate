@@ -455,11 +455,26 @@
             const modelNos = items.map(item => item.modelNo || item.modelName || '').join('   •   ');
             const weights = items.map(item => item.gram ? item.gram + 'g' : (item.weight || '')).join('   •   ');
             const sizes = items.map(item => item.size || '').join('   •   ');
+            const colors = items.map(item => item.gold || item.color || '').join('   •   ');
+
+            // const materials = items.map(item => item.meterial || '').join('   •   ');
+            const goldDisplay = items.map(item => {
+                const material = item.meterial || '';
+                const color = item.gold || item.color || '';
+                if (material && color) {
+                    return `${material} ${color}`;
+                } else if (material) {
+                    return material;
+                } else if (color) {
+                    return color;
+                } else {
+                    return '';
+                }
+            }).join('   •   ');
 
             // stone
             let stonesToCheck = items.map(item => item.stone || '');
 
-            const colors = items.map(item => item.gold || item.color || '').join('   •   ');
 
             //order date
             const uniqueOrderDates = [...new Set(items.map(item => item.orderDate || ''))].filter(date => date !== '');
@@ -566,7 +581,7 @@
                                 <div class="certificate-row">
                                     <div class="certificate-label">Gold</div>
                                     <div class="certificate-divider"></div>
-                                    <div class="certificate-value">${colors}</div>
+                                    <div class="certificate-value">${goldDisplay}</div>
                                 </div>
                             </td>
                         </tr>
