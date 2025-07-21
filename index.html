@@ -457,9 +457,9 @@
             const sizes = items.map(item => item.size || '').join('   •   ');
             const colors = items.map(item => item.gold || item.color || '').join('   •   ');
 
-            // const materials = items.map(item => item.meterial || '').join('   •   ');
+            // const materials = items.map(item => item.material || '').join('   •   ');
             const goldDisplay = items.map(item => {
-                const material = item.meterial || '';
+                const material = item.material || '';
                 const color = item.gold || item.color || '';
                 if (material && color) {
                     return `${material} ${color}`;
