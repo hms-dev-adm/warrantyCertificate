@@ -455,7 +455,6 @@
             const modelNos = items.map(item => item.modelNo || item.modelName || '').join('   •   ');
             const weights = items.map(item => item.gram ? item.gram + 'g' : (item.weight || '')).join('   •   ');
             const sizes = items.map(item => item.size || '').join('   •   ');
-            const colors = items.map(item => item.gold || item.color || '').join('   •   ');
 
             // const materials = items.map(item => item.material || '').join('   •   ');
             const goldDisplay = items.map(item => {
@@ -472,9 +471,21 @@
                 }
             }).join('   •   ');
 
-            // stone
-            let stonesToCheck = items.map(item => item.stone || '');
+            // stone 처리 - stoneMain과 stoneSub 조합 8/9 수정
+            const stonesToCheck = items.map(item => {
+                const stoneMain = item.stoneMain || '';
+                const stoneSub = item.stoneSub || item['stoneSub '] || ''; // 공백이 있는 경우도 처리
 
+                if (stoneMain && stoneSub) {
+                    return `${stoneMain}  ${stoneSub}`;
+                } else if (stoneMain) {
+                    return stoneMain;
+                } else if (stoneSub) {
+                    return stoneSub;
+                } else {
+                    return '';
+                }
+            });
 
             //order date
             const uniqueOrderDates = [...new Set(items.map(item => item.orderDate || ''))].filter(date => date !== '');
@@ -495,25 +506,6 @@
             }
 
 
-            //보증기간
-            // const warrantyEndDate = new Date();
-            // warrantyEndDate.setFullYear(today.getFullYear() + 1);
-
-            // [예외] nowDate가 있으면 사용, 없으면 현재 날짜 사용
-            // let certificateDate = today;
-            // if (data.nowDate) {
-            //     try {
-            //         certificateDate = new Date(data.nowDate);
-            //         if (isNaN(certificateDate)) {
-            //             certificateDate = today;
-            //         }
-            //     } catch (e) {
-            //         certificateDate = today;
-            //     }
-            // }
-
-            // const warrantyEnd = new Date(certificateDate);
-            // warrantyEnd.setFullYear(certificateDate.getFullYear() + 1);
             return `
                 <div class="certificate">
                     <div class="certificate-title">CERTIFICATE</div>
