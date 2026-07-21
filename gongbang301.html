@@ -451,13 +451,16 @@
 
             // const today = new Date();
 
+            // 값이 비어있으면 스톤이 없을 때와 동일하게 '•' 표시
+            const orDot = (v) => (v && v.trim() !== '') ? v : '•';
+
             // 제품 값 join
-            const modelNos = items.map(item => item.modelNo || item.modelName || '').join('   •   ');
-            const weights = items.map(item => item.gram ? item.gram + 'g' : (item.weight || '')).join('   •   ');
-            const sizes = items.map(item => item.size || '').join('   •   ');
+            const modelNos = orDot(items.map(item => item.modelNo || item.modelName || '').join('   •   '));
+            const weights = orDot(items.map(item => item.gram ? item.gram + 'g' : (item.weight || '')).join('   •   '));
+            const sizes = orDot(items.map(item => item.size || '').join('   •   '));
 
             // const materials = items.map(item => item.material || '').join('   •   ');
-            const goldDisplay = items.map(item => {
+            const goldDisplay = orDot(items.map(item => {
                 const material = item.material || '';
                 const color = item.gold || item.color || '';
                 if (material && color) {
@@ -469,7 +472,7 @@
                 } else {
                     return '';
                 }
-            }).join('   •   ');
+            }).join('   •   '));
 
             // stone 처리 - stoneMain과 stoneSub 조합 8/9 수정
             const stonesToCheck = items.map(item => {
@@ -489,7 +492,7 @@
 
             //order date
             const uniqueOrderDates = [...new Set(items.map(item => item.orderDate || ''))].filter(date => date !== '');
-            const orderDates = uniqueOrderDates.join('   •   ');
+            const orderDates = orDot(uniqueOrderDates.join('   •   '));
 
             //스톤 예외처리
             let stonesDisplay;
