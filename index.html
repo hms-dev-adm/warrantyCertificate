@@ -46,29 +46,22 @@
         }
 
         .brand-link {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            display: block;
             width: 200px;
             height: 160px;
-            padding: 16px;
             box-sizing: border-box;
             border: 1px solid #ddd;
             border-radius: 8px;
             background-color: #fff;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             transition: box-shadow 0.2s, transform 0.2s;
         }
 
         .brand-link:hover {
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
             transform: translateY(-2px);
-        }
-
-        .brand-logo {
-            display: block;
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
         }
 
         .brand-label {
@@ -80,8 +73,13 @@
             text-align: center;
         }
 
+        #gongbang301 {
+            background-image: url('Img/root_logo_gb.jpg');
+        }
+
         #poco-primo {
             border-color: #D2B971;
+            background-image: url('Img/root_logo_poco.png');
         }
 
         #poco-primo:hover {
@@ -95,15 +93,11 @@
         <h1>보증서 자동 생성</h1>
         <div class="brand-links">
             <div class="brand-item">
-                <a class="brand-link" id="gongbang301" href="/gongbang301">
-                    <img class="brand-logo" src="Img/root_logo_gb.jpg" alt="GONGBANG 301 로고">
-                </a>
+                <a class="brand-link" id="gongbang301" href="/gongbang301" aria-label="GONGBANG 301"></a>
                 <div class="brand-label">GONGBANG 301</div>
             </div>
             <div class="brand-item">
-                <a class="brand-link" id="poco-primo" href="/poco-primo">
-                    <img class="brand-logo" src="Img/root_logo_poco.png" alt="POCO PRIMO 로고">
-                </a>
+                <a class="brand-link" id="poco-primo" href="/poco-primo" aria-label="POCO PRIMO"></a>
                 <div class="brand-label">POCO PRIMO</div>
             </div>
         </div>
